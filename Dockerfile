@@ -1,20 +1,21 @@
-FROM node:10-alpine
+FROM node:10
 
-RUN mkdir -p /home/node/app/node_modules && \
-mkdir -p /home/node/app/tmp && \
-chown -R 1000:1000 /home/node/app && \
-chown -R 1000:1000 /home/node/app/tmp
+ENV POSTGRES_USERNAME=$POSTGRES_USERNAME \
+    POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
+    POSTGRES_HOST=$POSTGRES_USERNAME \
+    POSTGRES_DB=$POSTGRES_DB \
+    AWS_BUCKET=$AWS_BUCKET \
+    AWS_REGION=$AWS_REGION \
+    AWS_PROFILE=$AWS_PROFILE \
+    JWT_SECRET=$JWT_SECRET \
+    URL=$URL \
+    PORT=$PORT \
+    ORIGIN_URL=$ORIGIN_URL
 
 WORKDIR /home/node/app
-
-COPY package*.json ./
+COPY . .
 RUN npm set cache .npm
 RUN npm ci --only=production
 
-RUN adduser -D 1000
-USER 1000
-
-COPY --chown=1000:1000 . .
-
-EXPOSE 8080
-CMD [ "npm", "start"]
+EXPOSE 8081
+CMD [ "node", "./www/server.js"]
