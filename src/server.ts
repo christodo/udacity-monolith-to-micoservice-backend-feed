@@ -2,16 +2,15 @@ import cors from 'cors';
 import express from 'express';
 import {sequelize} from './sequelize';
 
-import {IndexRouter} from './controllers/v0/index.router';
+import {IndexRouterV1} from './controllers/v1/index.router';
 
 import bodyParser from 'body-parser';
 import {config} from './config/config';
-import {V0_FEED_MODELS, V0_USER_MODELS} from './controllers/v0/model.index';
+import {V1_FEED_MODELS} from './controllers/v1/model.index';
 
 
 (async () => {
-  await sequelize.addModels(V0_FEED_MODELS);
-  await sequelize.addModels(V0_USER_MODELS);
+  await sequelize.addModels(V1_FEED_MODELS);
   await sequelize.sync();
 
   const app = express();
@@ -26,20 +25,20 @@ import {V0_FEED_MODELS, V0_USER_MODELS} from './controllers/v0/model.index';
       'X-Access-Token', 'Authorization',
     ],
     methods: 'GET,HEAD,OPTIONS,PUT,PATCH,POST,DELETE',
-    origin: config.url,
+    origin: config.origin_url,
   }));
 
-  app.use('/api/v0/', IndexRouter);
+  app.use('/api/v1/', IndexRouterV1);
 
   // Root URI call
   app.get( '/', async ( req, res ) => {
-    res.send( '/api/v0/' );
+    res.send( '/api/v1/' );
   } );
 
 
   // Start the Server
   app.listen( port, () => {
-    console.log( `server running ${config.url}` );
+    console.log( `server running ${config.url}:${port}` );
     console.log( `press CTRL+C to stop server` );
   } );
 })();
