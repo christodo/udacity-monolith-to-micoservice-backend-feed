@@ -17,5 +17,5 @@ COPY . .
 RUN npm set cache .npm
 RUN npm ci --only=production
 
-EXPOSE 8081
+EXPOSE 8080
 CMD [ "node", "./www/server.js"]
